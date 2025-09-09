@@ -37,7 +37,6 @@ export default function DashboardLayout() {
               {upload.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
               {upload.isPending ? 'Uploading…' : 'Upload'}
             </button>
-            <div className="h-8 w-8 rounded-full bg-gray-200" />
           <button
             className="rounded-md px-3 py-1.5 text-sm hover:bg-gray-100"
             onClick={() => {
@@ -82,24 +81,26 @@ export default function DashboardLayout() {
               <Images className="h-4 w-4" />
               Assets
             </NavLink>
-            <NavLink
-              to="/settings"
-              className={({ isActive }) =>
-                `flex items-center gap-3 rounded-lg px-3 py-2 text-sm ${
-                  isActive
-                    ? 'bg-blue-600 text-white shadow-sm'
-                    : 'text-gray-700 hover:bg-gray-100'
-                }`
-              }
-            >
-              <SettingsIcon className="h-4 w-4" />
-              Settings
-            </NavLink>
+            {(useAuth().role === 'ADMIN' || useAuth().role === 'MANAGER') ? (
+              <NavLink
+                to="/users"
+                className={({ isActive }) =>
+                  `flex items-center gap-3 rounded-lg px-3 py-2 text-sm ${
+                    isActive
+                      ? 'bg-blue-600 text-white shadow-sm'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`
+                }
+              >
+                <SettingsIcon className="h-4 w-4" />
+                Users
+              </NavLink>
+            ) : null}
           </nav>
           <div className="mt-6 border-t border-gray-200 pt-3 text-xs text-gray-500">v0.1.0</div>
         </aside>
 
-        <main className="flex-1 pr-4 pl-2 py-4 md:ml-56">
+        <main className="flex-1 pr-4 pl-2 py-4 md:ml-60">
           <Outlet />
         </main>
       </div>

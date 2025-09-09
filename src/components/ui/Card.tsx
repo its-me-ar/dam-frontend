@@ -1,7 +1,7 @@
 import React from 'react'
 
-export function Card({ children, className = '' }: { children: React.ReactNode; className?: string }) {
-  return <div className={`rounded-2xl border border-gray-200 bg-white shadow-sm ${className}`}>{children}</div>
+export function Card({ children, className = '', ...props }: React.HTMLAttributes<HTMLDivElement> & { children: React.ReactNode; className?: string }) {
+  return <div className={`rounded-2xl border border-gray-200 bg-white shadow-sm ${className}`} {...props}>{children}</div>
 }
 
 export function CardHeader({ title, description }: { title: string; description?: string }) {

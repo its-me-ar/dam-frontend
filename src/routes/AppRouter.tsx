@@ -1,31 +1,69 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import ProtectedRoute from './ProtectedRoute'
-import DashboardLayout from '../layouts/DashboardLayout'
-import OverviewPage from '../pages/Overview'
-import AssetsPage from '../pages/Assets'
-import SettingsPage from '../pages/Settings'
-import LoginPage from '../pages/Login'
+import { Suspense, lazy } from 'react'
+
+const ProtectedRoute = lazy(() => import('./ProtectedRoute'))
+const RoleGuard = lazy(() => import('./ProtectedRoute').then(m => ({ default: m.RoleGuard })))
+const GuestRoute = lazy(() => import('./ProtectedRoute').then(m => ({ default: m.GuestRoute })))
+const DashboardLayout = lazy(() => import('../layouts/DashboardLayout'))
+const OverviewPage = lazy(() => import('../pages/Overview'))
+const AssetsPage = lazy(() => import('../pages/Assets'))
+const SettingsPage = lazy(() => import('../pages/Settings'))
+const LoginPage = lazy(() => import('../pages/Login'))
+const UsersPage = lazy(() => import('../pages/Users'))
+const RegisterInvitePage = lazy(() => import('../pages/RegisterInvite'))
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <ProtectedRoute />,
+    element: (
+      <Suspense fallback={null}>
+        <ProtectedRoute />
+      </Suspense>
+    ),
     children: [
       {
-        element: <DashboardLayout />,
+        element: (
+          <Suspense fallback={null}>
+            <DashboardLayout />
+          </Suspense>
+        ),
         children: [
-          { index: true, element: <OverviewPage /> },
-          { path: 'assets', element: <AssetsPage /> },
-          { path: 'settings', element: <SettingsPage /> },
+          { index: true, element: <Suspense fallback={null}><OverviewPage /></Suspense> },
+          { path: 'assets', element: <Suspense fallback={null}><AssetsPage /></Suspense> },
+          { path: 'settings', element: <Suspense fallback={null}><SettingsPage /></Suspense> },
+          {
+            element: (
+              <Suspense fallback={null}>
+                <RoleGuard allowed={["ADMIN", "MANAGER"]} />
+              </Suspense>
+            ),
+            children: [
+              { path: 'users', element: <Suspense fallback={null}><UsersPage /></Suspense> },
+            ]
+          },
         ],
       },
     ],
   },
-  { path: '/login', element: <LoginPage /> },
+  {
+    element: (
+      <Suspense fallback={null}>
+        <GuestRoute />
+      </Suspense>
+    ),
+    children: [
+      { path: '/login', element: <Suspense fallback={null}><LoginPage /></Suspense> },
+      { path: '/register/invite', element: <Suspense fallback={null}><RegisterInvitePage /></Suspense> },
+    ],
+  },
 ])
 
 export default function AppRouter() {
-  return <RouterProvider router={router} />
+  return (
+    <Suspense fallback={null}>
+      <RouterProvider router={router} />
+    </Suspense>
+  )
 }
 
 
