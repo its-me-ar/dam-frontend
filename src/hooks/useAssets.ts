@@ -9,6 +9,7 @@ export type Asset = {
   createdAt: string
   durationSeconds?: number
   sizeBytes?: number
+  uploader?: { id: string; fullName: string; email: string; role: string }
 }
 
 type AssetsApiResponse = {
@@ -25,6 +26,7 @@ type AssetsApiResponse = {
       key: string
       value: any
     }>
+    uploader?: { id: string; full_name: string; email: string; role: string }
   }>
 }
 
@@ -58,6 +60,7 @@ async function fetchAssets(): Promise<Asset[]> {
     createdAt: item.created_at,
     durationSeconds: item.mime_type?.startsWith('video') ? resolveDurationSeconds(item) : undefined,
     sizeBytes: resolveOriginalSizeBytes(item),
+    uploader: item.uploader ? { id: item.uploader.id, fullName: item.uploader.full_name, email: item.uploader.email, role: item.uploader.role } : undefined,
   }))
 }
 

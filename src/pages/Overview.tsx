@@ -1,46 +1,49 @@
 import { Card, CardContent } from '../components/ui/Card'
 import { StatCard } from '../components/dashboard/StatCard'
-import { ChartPlaceholder } from '../components/dashboard/ChartPlaceholder'
+import { useQuery } from '@tanstack/react-query'
+import { fetchJobs, fetchMetrics } from '../lib/api'
 
 export default function OverviewPage() {
+  const metrics = useQuery({ queryKey: ['metrics'], queryFn: fetchMetrics })
+  const jobs = useQuery({ queryKey: ['jobs'], queryFn: fetchJobs })
   return (
     <div>
       <h1 className="mb-2 text-2xl font-semibold">DAM Dashboard</h1>
       <p className="mb-6 text-sm text-gray-500">Manage assets, uploads and activity</p>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <StatCard title="Total Assets" value="1,248" delta="+32 this week" tone="peach" />
-        <StatCard title="Storage Used" value="62%" delta="512 GB of 800 GB" tone="mint" />
-        <ChartPlaceholder />
+        <StatCard title="Total Assets" value={String(metrics.data?.totalAssets ?? '—')} delta={`+${metrics.data?.addedThisWeek ?? '—'} this week`} tone="peach" />
+        <StatCard title="Storage Used" value={`${metrics.data?.storageUsedGB ?? '—'} GB`} delta="Total used" tone="mint" />
+        <StatCard title="New Uploads" value={String(metrics.data?.newUploadsToday ?? '—')} delta="Today" tone="indigo" />
       </div>
 
-      <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
-        <StatCard title="New Uploads" value="32" delta="Today" tone="indigo" />
+      {/* <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
         <StatCard title="Processing Queue" value="5" delta="In progress" tone="sky" />
         <Card><CardContent>Quick links</CardContent></Card>
-      </div>
+      </div> */}
 
       <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
         <Card>
           <CardContent>
-            <h3 className="mb-4 text-lg font-semibold">Recent Uploads</h3>
-            <div className="space-y-3">
-              {[
-                { name: 'Homepage Banner.png', note: 'Marketing / Banners', meta: '2.1 MB' },
-                { name: 'Product_01.mp4', note: 'Videos / Products', meta: '34 MB' },
-                { name: 'Logo.svg', note: 'Brand / Logos', meta: '24 KB' },
-              ].map((t, i) => (
-                <div key={i} className="flex items-center justify-between rounded-xl border border-gray-100 px-3 py-2">
-                  <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-lg bg-gray-100" />
+            <h3 className="mb-4 text-lg font-semibold">Processing Jobs</h3>
+            {jobs.isLoading ? (
+              <div className="text-sm text-gray-500">Loading…</div>
+            ) : jobs.data?.length ? (
+              <div className="space-y-3">
+                {jobs.data.map((j) => (
+                  <div key={j.id} className="flex items-center justify-between rounded-xl border border-gray-100 px-3 py-2">
                     <div>
-                      <div className="font-medium">{t.name}</div>
-                      <div className="text-sm text-gray-500">{t.note}</div>
+                      <div className="font-medium">{j.asset.filename}</div>
+                      <div className="text-xs text-gray-500">{j.worker_name} • {j.event_name}</div>
+                    </div>
+                    <div className="text-xs">
+                      <span className={`rounded-md px-2 py-0.5 ${j.status === 'ACTIVE' ? 'bg-yellow-50 text-yellow-700 border border-yellow-200' : j.status === 'COMPLETED' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>{j.status}</span>
                     </div>
                   </div>
-                  <div className="tabular-nums text-sm text-gray-600">{t.meta}</div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-sm text-gray-500">No jobs</div>
+            )}
           </CardContent>
         </Card>
       </div>
