@@ -7,7 +7,11 @@ export function formatDuration(totalSeconds: number): string {
   return hours > 0 ? `${hours}:${mm}:${ss}` : `${minutes}:${ss}`;
 }
 
-export function formatSize(bytes: number): string {
+export function formatSize(bytes: number | undefined): string {
+  if (typeof bytes !== 'number' || isNaN(bytes)) {
+    return 'Unknown size';
+  }
+  
   const units = ["B", "KB", "MB", "GB"];
   let i = 0;
   let size = bytes;

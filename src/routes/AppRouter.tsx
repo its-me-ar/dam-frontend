@@ -7,10 +7,12 @@ const GuestRoute = lazy(() => import('./ProtectedRoute').then(m => ({ default: m
 const DashboardLayout = lazy(() => import('../layouts/DashboardLayout'))
 const OverviewPage = lazy(() => import('../pages/Overview'))
 const AssetsPage = lazy(() => import('../pages/Assets'))
+const SharedWithMePage = lazy(() => import('../pages/SharedWithMe'))
 const SettingsPage = lazy(() => import('../pages/Settings'))
 const LoginPage = lazy(() => import('../pages/Login'))
 const UsersPage = lazy(() => import('../pages/Users'))
 const RegisterInvitePage = lazy(() => import('../pages/RegisterInvite'))
+const SharedAssetPage = lazy(() => import('../pages/SharedAsset'))
 
 const router = createBrowserRouter([
   {
@@ -30,6 +32,7 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <Suspense fallback={null}><OverviewPage /></Suspense> },
           { path: 'assets', element: <Suspense fallback={null}><AssetsPage /></Suspense> },
+          { path: 'shared-with-me', element: <Suspense fallback={null}><SharedWithMePage /></Suspense> },
           { path: 'settings', element: <Suspense fallback={null}><SettingsPage /></Suspense> },
           {
             element: (
@@ -55,6 +58,10 @@ const router = createBrowserRouter([
       { path: '/login', element: <Suspense fallback={null}><LoginPage /></Suspense> },
       { path: '/register/invite', element: <Suspense fallback={null}><RegisterInvitePage /></Suspense> },
     ],
+  },
+  {
+    path: '/shared/:assetId',
+    element: <Suspense fallback={null}><SharedAssetPage /></Suspense>,
   },
 ])
 

@@ -152,4 +152,159 @@ export async function fetchJobs() {
   return data.data
 }
 
+// Share asset
+export type ShareAssetPayload = {
+  asset_id: string
+  share_type: 'PUBLIC' | 'RESTRICTED'
+  user_ids?: string[]
+}
+
+export type ShareAssetResponse = {
+  success: boolean
+  message: string
+  data: {
+    share_url: string
+    asset_id: string
+    share_type: string
+  }
+}
+
+export async function shareAsset(payload: ShareAssetPayload): Promise<ShareAssetResponse['data']> {
+  const { data } = await apiClient.post<ShareAssetResponse>('/assets/share', payload)
+  return data.data
+}
+
+// Users
+export type User = {
+  id: string
+  full_name: string
+  email: string
+  role: 'ADMIN' | 'MANAGER' | 'USER'
+  createdAt: string
+}
+
+export type UsersResponse = {
+  status: string
+  message: string
+  data: User[]
+}
+
+export async function fetchUsers(): Promise<User[]> {
+  const { data } = await apiClient.get<UsersResponse>('/users')
+  return data.data
+}
+
+// Shared Asset Visibility
+export type AssetVisibilityResponse = {
+  status: string
+  message: string
+  data: {
+    asset_id: string
+    visibility_status: 'PUBLIC' | 'RESTRICTED' | 'PRIVATE'
+  }
+}
+
+export async function fetchAssetVisibility(assetId: string): Promise<AssetVisibilityResponse['data']> {
+  const { data } = await apiClient.get<AssetVisibilityResponse>(`/assets/share/visibility/${assetId}`)
+  return data.data
+}
+
+// Public Asset Data
+export type PublicAssetResponse = {
+  status: string
+  message: string
+  data: {
+    asset_id: string
+    filename: string
+    mime_type: string
+    size_bytes: number
+    uploader: {
+      id: string
+      full_name: string
+      email: string
+      role: string
+    }
+    shared_by: {
+      id: string
+      full_name: string
+      email: string
+    }
+    created_at: string
+    paths: Record<string, string>
+  }
+}
+
+export async function fetchPublicAsset(assetId: string): Promise<PublicAssetResponse['data']> {
+  const { data } = await apiClient.get<PublicAssetResponse>(`/assets/public/${assetId}`)
+  return data.data
+}
+
+// Restricted Asset Data (same structure as public)
+export type RestrictedAssetResponse = PublicAssetResponse
+
+export async function fetchRestrictedAsset(assetId: string): Promise<RestrictedAssetResponse['data']> {
+  const { data } = await apiClient.get<RestrictedAssetResponse>(`/assets/restricted/${assetId}`)
+  return data.data
+}
+
+// Shared with me API
+export interface SharedAsset {
+  id: string
+  asset_id: string
+  shared_by: string
+  share_type: 'PUBLIC' | 'RESTRICTED'
+  share_token: string
+  user_id: string | null
+  is_active: boolean
+  created_at: string
+  updated_at: string
+  asset: {
+    asset_id: string
+    filename: string
+    mime_type: string
+    storage_path: string
+    uploader_id: string
+    group_id: string | null
+    size_bytes: number
+    status: string
+    created_at: string
+    updated_at: string
+    metadata: Array<{
+      metadata_id: string
+      asset_id: string
+      key: string
+      value: any
+      created_at: string
+      updated_at: string
+    }>
+    uploader: {
+      id: string
+      full_name: string
+      email: string
+      role: string
+    }
+  }
+  sharedBy: {
+    id: string
+    full_name: string
+    email: string
+  }
+  user: {
+    id: string
+    full_name: string
+    email: string
+  } | null
+}
+
+export interface SharedWithMeResponse {
+  status: string
+  message: string
+  data: SharedAsset[]
+}
+
+export async function fetchSharedWithMe(): Promise<SharedWithMeResponse['data']> {
+  const { data } = await apiClient.get<SharedWithMeResponse>('/assets/shared')
+  return data.data
+}
+
 

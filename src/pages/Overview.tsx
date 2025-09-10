@@ -2,8 +2,10 @@ import { Card, CardContent } from '../components/ui/Card'
 import { StatCard } from '../components/dashboard/StatCard'
 import { useQuery } from '@tanstack/react-query'
 import { fetchJobs, fetchMetrics } from '../lib/api'
+import { usePageTitle } from '../hooks/usePageTitle'
 
 export default function OverviewPage() {
+  usePageTitle()
   const metrics = useQuery({ queryKey: ['metrics'], queryFn: fetchMetrics })
   const jobs = useQuery({ queryKey: ['jobs'], queryFn: fetchJobs })
   return (

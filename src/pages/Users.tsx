@@ -3,8 +3,10 @@ import { RefreshCcw } from 'lucide-react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { sendInvitation, type InvitePayload, fetchInvitations, reinviteInvitation } from '../lib/api'
 import { useToast } from '../components/ui/Toast'
+import { usePageTitle } from '../hooks/usePageTitle'
 
 export default function UsersPage() {
+  usePageTitle()
   const { notifySuccess, notifyError } = useToast()
   const [email, setEmail] = useState('')
   const [role, setRole] = useState<InvitePayload['role']>('USER')

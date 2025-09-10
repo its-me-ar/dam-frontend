@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import { Outlet, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useUploadAsset } from '../hooks/useUploadAsset'
-import { Menu, Home, Images, Settings as SettingsIcon, Plus, Loader2 } from 'lucide-react'
+import { Menu, Home, Images, Share2, Settings as SettingsIcon, Plus, Loader2 } from 'lucide-react'
  
 
 export default function DashboardLayout() {
@@ -80,6 +80,19 @@ export default function DashboardLayout() {
             >
               <Images className="h-4 w-4" />
               Assets
+            </NavLink>
+            <NavLink
+              to="/shared-with-me"
+              className={({ isActive }) =>
+                `flex items-center gap-3 rounded-lg px-3 py-2 text-sm ${
+                  isActive
+                    ? 'bg-blue-600 text-white shadow-sm'
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`
+              }
+            >
+              <Share2 className="h-4 w-4" />
+              Shared with Me
             </NavLink>
             {(useAuth().role === 'ADMIN' || useAuth().role === 'MANAGER') ? (
               <NavLink
