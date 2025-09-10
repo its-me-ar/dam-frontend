@@ -4,6 +4,7 @@ import { useMutation } from '@tanstack/react-query'
 import { loginRequest } from '../lib/api'
 import { useAuth } from '../context/AuthContext'
 import { Navigate, useNavigate } from 'react-router-dom'
+import { usePageTitle } from '../hooks/usePageTitle'
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Required'),
@@ -11,6 +12,7 @@ const LoginSchema = Yup.object().shape({
 })
 
 export default function LoginPage() {
+  usePageTitle()
   const { login, isAuthenticated } = useAuth()
   const navigate = useNavigate()
   const { mutateAsync, isPending, error } = useMutation({

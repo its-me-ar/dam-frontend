@@ -10,6 +10,18 @@ export type Asset = {
   durationSeconds?: number
   sizeBytes?: number
   uploader?: { id: string; fullName: string; email: string; role: string }
+  shares?: Array<{
+    id: string
+    asset_id: string
+    shared_by: string
+    share_type: 'PUBLIC' | 'RESTRICTED'
+    share_token: string
+    user_id: string | null
+    is_active: boolean
+    created_at: string
+    updated_at: string
+    user?: { id: string; full_name: string; email: string; role: string }
+  }>
 }
 
 type AssetsApiResponse = {
@@ -27,6 +39,18 @@ type AssetsApiResponse = {
       value: any
     }>
     uploader?: { id: string; full_name: string; email: string; role: string }
+    shares?: Array<{
+      id: string
+      asset_id: string
+      shared_by: string
+      share_type: 'PUBLIC' | 'RESTRICTED'
+      share_token: string
+      user_id: string | null
+      is_active: boolean
+      created_at: string
+      updated_at: string
+      user?: { id: string; full_name: string; email: string; role: string }
+    }>
   }>
 }
 
@@ -61,6 +85,23 @@ async function fetchAssets(): Promise<Asset[]> {
     durationSeconds: item.mime_type?.startsWith('video') ? resolveDurationSeconds(item) : undefined,
     sizeBytes: resolveOriginalSizeBytes(item),
     uploader: item.uploader ? { id: item.uploader.id, fullName: item.uploader.full_name, email: item.uploader.email, role: item.uploader.role } : undefined,
+    shares: item.shares?.map(share => ({
+      id: share.id,
+      asset_id: share.asset_id,
+      shared_by: share.shared_by,
+      share_type: share.share_type,
+      share_token: share.share_token,
+      user_id: share.user_id,
+      is_active: share.is_active,
+      created_at: share.created_at,
+      updated_at: share.updated_at,
+      user: share.user ? {
+        id: share.user.id,
+        full_name: share.user.full_name,
+        email: share.user.email,
+        role: share.user.role
+      } : undefined
+    }))
   }))
 }
 

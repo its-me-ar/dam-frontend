@@ -6,8 +6,10 @@ import { useMutation } from '@tanstack/react-query'
 import { registerWithInvite } from '../lib/api'
 import { useToast } from '../components/ui/Toast'
 import { useNavigate } from 'react-router-dom'
+import { usePageTitle } from '../hooks/usePageTitle'
 
 export default function RegisterInvitePage() {
+  usePageTitle()
   const [params] = useSearchParams()
   const token = params.get('token')
 
