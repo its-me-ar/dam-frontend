@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import {
   createContext,
   useEffect,
@@ -10,7 +11,7 @@ import { setAuthToken } from '../lib/api';
 
 export type Role = 'ADMIN' | 'USER' | 'MANAGER';
 
-type AuthContextValue = {
+export type AuthContextValue = {
   token: string | null;
   isAuthenticated: boolean;
   role: Role | null;
@@ -19,7 +20,9 @@ type AuthContextValue = {
   logout: () => void;
 };
 
-const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+export const AuthContext = createContext<AuthContextValue | undefined>(
+  undefined
+);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(() =>
@@ -82,7 +85,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setRole(null);
       setUserId(null);
     }
-  }, [token]);
+  }, [token, logout]);
 
   // Periodic check for token expiry (every minute)
   useEffect(() => {
@@ -95,7 +98,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }, 60000); // Check every minute
 
     return () => clearInterval(interval);
-  }, [token]);
+  }, [token, logout]);
 
   const value = useMemo<AuthContextValue>(
     () => ({
