@@ -1,51 +1,101 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import { jwtDecode } from 'jwt-decode'
-import { setAuthToken } from '../lib/api'
+import {
+  createContext,
+  useEffect,
+  useMemo,
+  useState,
+  useCallback,
+} from 'react';
+import { jwtDecode } from 'jwt-decode';
+import { setAuthToken } from '../lib/api';
 
-export type Role = 'ADMIN' | 'USER' | 'MANAGER'
+export type Role = 'ADMIN' | 'USER' | 'MANAGER';
 
 type AuthContextValue = {
-  token: string | null
-  isAuthenticated: boolean
-  role: Role | null
-  userId: string | null
-  login: (token: string) => void
-  logout: () => void
-}
+  token: string | null;
+  isAuthenticated: boolean;
+  role: Role | null;
+  userId: string | null;
+  login: (token: string) => void;
+  logout: () => void;
+};
 
-const AuthContext = createContext<AuthContextValue | undefined>(undefined)
+const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [token, setToken] = useState<string | null>(() => localStorage.getItem('auth_token'))
-  const [role, setRole] = useState<Role | null>(null)
-  const [userId, setUserId] = useState<string | null>(null)
+  const [token, setToken] = useState<string | null>(() =>
+    localStorage.getItem('auth_token')
+  );
+  const [role, setRole] = useState<Role | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  // Function to check if token is expired
+  const isTokenExpired = (token: string): boolean => {
+    try {
+      const payload = jwtDecode<{ exp: number }>(token);
+      const currentTime = Math.floor(Date.now() / 1000);
+      return payload.exp < currentTime;
+    } catch {
+      return true;
+    }
+  };
+
+  // Function to logout user
+  const logout = useCallback(() => {
+    setToken(null);
+    localStorage.removeItem('auth_token');
+    setRole(null);
+    setUserId(null);
+  }, []);
 
   useEffect(() => {
-    setAuthToken(token)
+    setAuthToken(token);
     if (token) {
-      localStorage.setItem('auth_token', token)
-      // decode role from JWT payload (assumes { role: "ADMIN" | "USER" | "MANAGER" })
+      // Check if token is expired first
+      if (isTokenExpired(token)) {
+        logout();
+        return;
+      }
+
       try {
-        const payload = jwtDecode<{ role?: string; roles?: string[]; userId?: string; sub?: string; id?: string; email?: string }>(token)
-        const r: string | undefined = payload?.role ?? payload?.roles?.[0]
+        const payload = jwtDecode<{
+          userId: string;
+          role: string;
+          iat: number;
+          exp: number;
+        }>(token);
+
+        // Token is valid, proceed with normal flow
+        localStorage.setItem('auth_token', token);
+        const r: string = payload.role;
         if (r === 'ADMIN' || r === 'USER' || r === 'MANAGER') {
-          setRole(r)
+          setRole(r);
         } else {
-          setRole(null)
+          setRole(null);
         }
-        setUserId(payload.userId || payload.sub || payload.id || null)
-
+        setUserId(payload.userId);
       } catch {
-        setRole(null)
-        setUserId(null)
-
+        // Invalid token, logout and remove token
+        logout();
       }
     } else {
-      localStorage.removeItem('auth_token')
-      setRole(null)
-      setUserId(null)
+      localStorage.removeItem('auth_token');
+      setRole(null);
+      setUserId(null);
     }
-  }, [token])
+  }, [token]);
+
+  // Periodic check for token expiry (every minute)
+  useEffect(() => {
+    if (!token) return;
+
+    const interval = setInterval(() => {
+      if (token && isTokenExpired(token)) {
+        logout();
+      }
+    }, 60000); // Check every minute
+
+    return () => clearInterval(interval);
+  }, [token]);
 
   const value = useMemo<AuthContextValue>(
     () => ({
@@ -54,18 +104,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       role,
       userId,
       login: (newToken: string) => setToken(newToken),
-      logout: () => setToken(null),
+      logout,
     }),
-    [token, role, userId]
-  )
+    [token, role, userId, logout]
+  );
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
-
-export function useAuth(): AuthContextValue {
-  const ctx = useContext(AuthContext)
-  if (!ctx) throw new Error('useAuth must be used within AuthProvider')
-  return ctx
-}
-
-

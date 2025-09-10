@@ -1,29 +1,33 @@
-import { Navigate, Outlet } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
-import type { Role } from '../context/AuthContext'
+import { Navigate, Outlet } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+import type { Role } from '../context/AuthContext';
 
 export default function ProtectedRoute() {
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated } = useAuth();
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />
+    return <Navigate to='/login' replace />;
   }
-  return <Outlet />
+  return <Outlet />;
 }
 
-export function RoleGuard({ allowed, redirectTo = '/' }: { allowed: Role[]; redirectTo?: string }) {
-  const { role } = useAuth()
+export function RoleGuard({
+  allowed,
+  redirectTo = '/',
+}: {
+  allowed: Role[];
+  redirectTo?: string;
+}) {
+  const { role } = useAuth();
   if (!role || !allowed.includes(role)) {
-    return <Navigate to={redirectTo} replace />
+    return <Navigate to={redirectTo} replace />;
   }
-  return <Outlet />
+  return <Outlet />;
 }
 
 export function GuestRoute() {
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated } = useAuth();
   if (isAuthenticated) {
-    return <Navigate to="/" replace />
+    return <Navigate to='/' replace />;
   }
-  return <Outlet />
+  return <Outlet />;
 }
-
-
