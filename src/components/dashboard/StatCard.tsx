@@ -1,11 +1,5 @@
 import { Card, CardContent } from '../../components/ui/Card';
-
-type StatCardProps = {
-  title: string;
-  value: string;
-  delta?: string;
-  tone?: 'peach' | 'mint' | 'indigo' | 'sky';
-};
+import type { StatCardProps } from '../../types';
 
 const toneToClasses: Record<NonNullable<StatCardProps['tone']>, string> = {
   peach: 'bg-orange-50 text-orange-800',

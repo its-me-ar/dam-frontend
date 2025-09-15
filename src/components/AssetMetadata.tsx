@@ -1,16 +1,7 @@
 import { Download } from 'lucide-react';
 import { formatSize } from '../utils/helper';
 import { useDownload } from '../hooks/useDownload';
-
-interface AssetMetadataProps {
-  asset: {
-    name: string;
-    mimeType: string;
-    sizeBytes?: number;
-    visibilityStatus: string;
-    paths: Record<string, string>;
-  };
-}
+import type { AssetMetadataProps } from '../types';
 
 export function AssetMetadata({ asset }: AssetMetadataProps) {
   const { downloadFile } = useDownload();

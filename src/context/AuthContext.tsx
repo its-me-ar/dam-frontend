@@ -9,16 +9,10 @@ import {
 import { jwtDecode } from 'jwt-decode';
 import { setAuthToken } from '../lib/api';
 
-export type Role = 'ADMIN' | 'USER' | 'MANAGER';
+import type { Role, AuthContextValue } from '../types';
 
-export type AuthContextValue = {
-  token: string | null;
-  isAuthenticated: boolean;
-  role: Role | null;
-  userId: string | null;
-  login: (token: string) => void;
-  logout: () => void;
-};
+// Re-export types for backward compatibility
+export type { Role, AuthContextValue };
 
 export const AuthContext = createContext<AuthContextValue | undefined>(
   undefined

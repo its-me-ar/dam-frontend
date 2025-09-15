@@ -2,14 +2,9 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { fetchAssetPaths } from '../lib/api';
 import { Modal } from './ui/Modal';
+import type { AssetPreviewModalProps } from '../types';
 
-type Props = {
-  assetId: string | null;
-  assetName?: string;
-  mimeType?: string;
-  open: boolean;
-  onClose: () => void;
-};
+type Props = AssetPreviewModalProps;
 
 export function AssetPreviewModal({
   assetId,

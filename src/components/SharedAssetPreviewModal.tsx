@@ -1,15 +1,6 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { File, Video, Image, Music, Archive } from 'lucide-react';
-
-interface SharedAssetPreviewModalProps {
-  asset: {
-    name: string;
-    mimeType: string;
-    paths: Record<string, string>;
-  };
-  isOpen: boolean;
-  onClose: () => void;
-}
+import type { SharedAssetPreviewModalProps } from '../types';
 
 export function SharedAssetPreviewModal({
   asset,

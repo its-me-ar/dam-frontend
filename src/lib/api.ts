@@ -1,7 +1,49 @@
 import axios from 'axios';
 import type { AxiosInstance } from 'axios';
+import type {
+  LoginPayload,
+  LoginResponse,
+  User,
+  AssetPathsResponse,
+  InvitePayload,
+  InviteResponse,
+  InvitationsListResponse,
+  RegisterInvitePayload,
+  RegisterInviteResponse,
+  MetricsResponse,
+  JobsResponse,
+  ShareAssetPayload,
+  ShareAssetResponse,
+  UsersResponse,
+  AssetVisibilityResponse,
+  PublicAssetResponse,
+  RestrictedAssetResponse,
+  SharedWithMeResponse,
+} from '../types';
 
 export const API_BASE_URL = import.meta.env.VITE_API_URL ?? '/api';
+
+// Re-export types for backward compatibility
+export type {
+  LoginPayload,
+  LoginResponse,
+  User,
+  AssetPathsResponse,
+  InvitePayload,
+  InviteResponse,
+  InvitationsListResponse,
+  RegisterInvitePayload,
+  RegisterInviteResponse,
+  MetricsResponse,
+  JobsResponse,
+  ShareAssetPayload,
+  ShareAssetResponse,
+  UsersResponse,
+  AssetVisibilityResponse,
+  PublicAssetResponse,
+  RestrictedAssetResponse,
+  SharedWithMeResponse,
+} from '../types';
 
 export const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
@@ -27,8 +69,6 @@ export function buildAssetUrl(path: string): string {
   return `${base}/${normalized}`;
 }
 
-export type LoginPayload = { email: string; password: string };
-
 type LoginApiResponse = {
   success: boolean;
   message: string;
@@ -37,8 +77,6 @@ type LoginApiResponse = {
     user: { id: string; full_name: string; email: string; role: string };
   };
 };
-
-export type LoginResponse = { token: string };
 
 export async function loginRequest(
   payload: LoginPayload
@@ -51,16 +89,6 @@ export async function loginRequest(
 }
 
 // Asset Paths
-export type AssetPathsResponse = {
-  status: string;
-  message: string;
-  data: {
-    asset_id: string;
-    filename: string;
-    mime_type: string;
-    paths: Record<string, string>;
-  };
-};
 
 export async function fetchAssetPaths(
   assetId: string
@@ -72,22 +100,6 @@ export async function fetchAssetPaths(
 }
 
 // Invitations
-export type InvitePayload = { email: string; role: 'USER' | 'MANAGER' };
-export type InviteResponse = {
-  success: boolean;
-  message: string;
-  data: {
-    id: string;
-    email: string;
-    role: 'USER' | 'MANAGER';
-    status: 'PENDING' | 'JOINED';
-    inviteBy: string;
-    createdAt: string;
-    updatedAt: string;
-    acceptedAt: string | null;
-    invitationLink: string;
-  };
-};
 
 export async function sendInvitation(
   payload: InvitePayload
@@ -98,27 +110,6 @@ export async function sendInvitation(
   );
   return data.data;
 }
-
-export type InvitationsListResponse = {
-  success: boolean;
-  message: string;
-  data: Array<{
-    id: string;
-    email: string;
-    role: 'USER' | 'MANAGER';
-    status: 'PENDING' | 'ACCEPTED' | 'EXPIRED' | 'JOINED';
-    inviteBy: string;
-    createdAt: string;
-    updatedAt: string;
-    acceptedAt: string | null;
-    invitedBy: {
-      id: string;
-      email: string;
-      full_name: string;
-      role: 'ADMIN' | 'MANAGER' | 'USER';
-    };
-  }>;
-};
 
 export async function fetchInvitations() {
   const { data } = await apiClient.get<InvitationsListResponse>('/invitations');
@@ -135,12 +126,6 @@ export async function reinviteInvitation(
 }
 
 // Register via invitation
-export type RegisterInvitePayload = {
-  token: string;
-  full_name: string;
-  password: string;
-};
-export type RegisterInviteResponse = { success: boolean; message: string };
 
 export async function registerWithInvite(
   payload: RegisterInvitePayload
@@ -153,44 +138,11 @@ export async function registerWithInvite(
 }
 
 // Dashboard metrics and jobs
-export type MetricsResponse = {
-  status: string;
-  message: string;
-  data: {
-    totalAssets: number;
-    addedThisWeek: number;
-    storageUsedGB: number;
-    newUploadsToday: number;
-  };
-};
 
 export async function fetchMetrics() {
   const { data } = await apiClient.get<MetricsResponse>('/assets/metrics');
   return data.data;
 }
-
-export type JobsResponse = {
-  status: string;
-  message: string;
-  data: Array<{
-    id: string;
-    asset_id: string;
-    job_id: string;
-    worker_name: string;
-    event_name: string;
-    status: 'ACTIVE' | 'COMPLETED' | 'FAILED';
-    created_at: string;
-    updated_at: string;
-    asset: {
-      asset_id: string;
-      filename: string;
-      mime_type: string;
-      uploader_id: string;
-      status: string;
-      created_at: string;
-    };
-  }>;
-};
 
 export async function fetchJobs() {
   const { data } = await apiClient.get<JobsResponse>('/assets/jobs');
@@ -198,21 +150,6 @@ export async function fetchJobs() {
 }
 
 // Share asset
-export type ShareAssetPayload = {
-  asset_id: string;
-  share_type: 'PUBLIC' | 'RESTRICTED';
-  user_ids?: string[];
-};
-
-export type ShareAssetResponse = {
-  success: boolean;
-  message: string;
-  data: {
-    share_url: string;
-    asset_id: string;
-    share_type: string;
-  };
-};
 
 export async function shareAsset(
   payload: ShareAssetPayload
@@ -225,19 +162,6 @@ export async function shareAsset(
 }
 
 // Users
-export type User = {
-  id: string;
-  full_name: string;
-  email: string;
-  role: 'ADMIN' | 'MANAGER' | 'USER';
-  createdAt: string;
-};
-
-export type UsersResponse = {
-  status: string;
-  message: string;
-  data: User[];
-};
 
 export async function fetchUsers(): Promise<User[]> {
   const { data } = await apiClient.get<UsersResponse>('/users');
@@ -245,14 +169,6 @@ export async function fetchUsers(): Promise<User[]> {
 }
 
 // Shared Asset Visibility
-export type AssetVisibilityResponse = {
-  status: string;
-  message: string;
-  data: {
-    asset_id: string;
-    visibility_status: 'PUBLIC' | 'RESTRICTED' | 'PRIVATE';
-  };
-};
 
 export async function fetchAssetVisibility(
   assetId: string
@@ -264,30 +180,6 @@ export async function fetchAssetVisibility(
 }
 
 // Public Asset Data
-export type PublicAssetResponse = {
-  status: string;
-  message: string;
-  data: {
-    asset_id: string;
-    filename: string;
-    mime_type: string;
-    size_bytes: number;
-    uploader: {
-      id: string;
-      full_name: string;
-      email: string;
-      role: string;
-    };
-    shared_by: {
-      id: string;
-      full_name: string;
-      email: string;
-    };
-    created_at: string;
-    paths: Record<string, string>;
-  };
-};
-
 export async function fetchPublicAsset(
   assetId: string
 ): Promise<PublicAssetResponse['data']> {
@@ -298,7 +190,6 @@ export async function fetchPublicAsset(
 }
 
 // Restricted Asset Data (same structure as public)
-export type RestrictedAssetResponse = PublicAssetResponse;
 
 export async function fetchRestrictedAsset(
   assetId: string
@@ -310,59 +201,6 @@ export async function fetchRestrictedAsset(
 }
 
 // Shared with me API
-export interface SharedAsset {
-  id: string;
-  asset_id: string;
-  shared_by: string;
-  share_type: 'PUBLIC' | 'RESTRICTED';
-  share_token: string;
-  user_id: string | null;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-  asset: {
-    asset_id: string;
-    filename: string;
-    mime_type: string;
-    storage_path: string;
-    uploader_id: string;
-    group_id: string | null;
-    size_bytes: number;
-    status: string;
-    created_at: string;
-    updated_at: string;
-    metadata: Array<{
-      metadata_id: string;
-      asset_id: string;
-      key: string;
-      value: any;
-      created_at: string;
-      updated_at: string;
-    }>;
-    uploader: {
-      id: string;
-      full_name: string;
-      email: string;
-      role: string;
-    };
-  };
-  sharedBy: {
-    id: string;
-    full_name: string;
-    email: string;
-  };
-  user: {
-    id: string;
-    full_name: string;
-    email: string;
-  } | null;
-}
-
-export interface SharedWithMeResponse {
-  status: string;
-  message: string;
-  data: SharedAsset[];
-}
 
 export async function fetchSharedWithMe(): Promise<
   SharedWithMeResponse['data']

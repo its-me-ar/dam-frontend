@@ -5,25 +5,12 @@ import {
   fetchRestrictedAsset,
   buildAssetUrl,
 } from '../lib/api';
-
-export type SharedAsset = {
-  id: string;
-  name: string;
-  mimeType: string;
-  thumbnailUrl?: string;
-  createdAt: string;
-  durationSeconds?: number;
-  sizeBytes?: number;
-  uploader?: { id: string; fullName: string; email: string; role: string };
-  sharedBy?: { id: string; fullName: string; email: string };
-  visibilityStatus: 'PUBLIC' | 'RESTRICTED' | 'PRIVATE';
-  paths: Record<string, string>;
-};
+import type { SharedAssetData } from '../types';
 
 export function useSharedAsset(assetId: string) {
   return useQuery({
     queryKey: ['shared-asset', assetId],
-    queryFn: async (): Promise<SharedAsset> => {
+    queryFn: async (): Promise<SharedAssetData> => {
       try {
         // First check if asset is visible/shared
         const visibility = await fetchAssetVisibility(assetId);

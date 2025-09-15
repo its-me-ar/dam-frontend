@@ -3,13 +3,7 @@ import { Modal } from './ui/Modal';
 import { Card, CardContent } from './ui/Card';
 import { Share2, Globe, Users, Copy, Check, ExternalLink } from 'lucide-react';
 import { useToast } from '../hooks/useToast';
-import type { Asset } from '../hooks/useAssets';
-
-interface ShareInfoModalProps {
-  open: boolean;
-  onClose: () => void;
-  asset: Asset | null;
-}
+import type { ShareInfoModalProps } from '../types';
 
 export function ShareInfoModal({ open, onClose, asset }: ShareInfoModalProps) {
   const [copied, setCopied] = useState(false);

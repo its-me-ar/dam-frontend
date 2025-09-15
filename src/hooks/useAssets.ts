@@ -1,58 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { apiClient, buildAssetUrl } from '../lib/api';
-
-export type Asset = {
-  id: string;
-  name: string;
-  mimeType: string;
-  thumbnailUrl?: string;
-  createdAt: string;
-  durationSeconds?: number;
-  sizeBytes?: number;
-  uploader?: { id: string; fullName: string; email: string; role: string };
-  shares?: Array<{
-    id: string;
-    asset_id: string;
-    shared_by: string;
-    share_type: 'PUBLIC' | 'RESTRICTED';
-    share_token: string;
-    user_id: string | null;
-    is_active: boolean;
-    created_at: string;
-    updated_at: string;
-    user?: { id: string; full_name: string; email: string; role: string };
-  }>;
-};
-
-type AssetsApiResponse = {
-  status: string;
-  message: string;
-  data: Array<{
-    asset_id: string;
-    filename: string;
-    mime_type: string;
-    storage_path: string;
-    size_bytes?: number;
-    created_at: string;
-    metadata: Array<{
-      key: string;
-      value: any;
-    }>;
-    uploader?: { id: string; full_name: string; email: string; role: string };
-    shares?: Array<{
-      id: string;
-      asset_id: string;
-      shared_by: string;
-      share_type: 'PUBLIC' | 'RESTRICTED';
-      share_token: string;
-      user_id: string | null;
-      is_active: boolean;
-      created_at: string;
-      updated_at: string;
-      user?: { id: string; full_name: string; email: string; role: string };
-    }>;
-  }>;
-};
+import type { Asset, AssetsApiResponse } from '../types';
 
 function resolveThumbnailUrl(
   item: AssetsApiResponse['data'][number]

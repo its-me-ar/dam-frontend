@@ -1,11 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../lib/api';
-
-type PresignResponse = {
-  status: string;
-  message: string;
-  data: { url: string; asset_id: string };
-};
+import type { PresignResponse } from '../types';
 
 async function presignUpload(input: {
   filename: string;

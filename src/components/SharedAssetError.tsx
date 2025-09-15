@@ -1,8 +1,5 @@
 import { AlertCircle, Lock, FileX } from 'lucide-react';
-
-interface SharedAssetErrorProps {
-  error: Error;
-}
+import type { SharedAssetErrorProps } from '../types';
 
 export function SharedAssetError({ error }: SharedAssetErrorProps) {
   // Check if it's a 401 authentication error

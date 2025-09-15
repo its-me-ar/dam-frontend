@@ -1,14 +1,4 @@
-import React from 'react';
-
-type ModalProps = {
-  open: boolean;
-  onClose: () => void;
-  title?: string;
-  children: React.ReactNode;
-  footer?: React.ReactNode;
-  size?: 'sm' | 'md' | 'lg' | 'xl';
-  contentClassName?: string;
-};
+import type { ModalProps } from '../../types';
 
 const sizeToWidth: Record<NonNullable<ModalProps['size']>, string> = {
   sm: 'max-w-md',

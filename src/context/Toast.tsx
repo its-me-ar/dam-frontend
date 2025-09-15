@@ -1,17 +1,12 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useCallback, useMemo, useState } from 'react';
 
-type Toast = {
-  id: number;
-  message: string;
-  variant: 'default' | 'success' | 'error';
-};
-type ToastCtx = {
-  notify: (message: string) => void;
-  notifySuccess: (message: string) => void;
-  notifyError: (message: string) => void;
-};
+import type { Toast, ToastCtx } from '../types';
 
-const ToastContext = createContext<ToastCtx | undefined>(undefined);
+// Re-export types for backward compatibility
+export type { Toast, ToastCtx };
+
+export const ToastContext = createContext<ToastCtx | undefined>(undefined);
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);

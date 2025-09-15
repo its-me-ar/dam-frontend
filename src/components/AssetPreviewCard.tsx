@@ -1,16 +1,6 @@
 import { Play, Eye, File, Video, Image, Music, Archive } from 'lucide-react';
 import { formatDuration } from '../utils/helper';
-
-interface AssetPreviewCardProps {
-  asset: {
-    name: string;
-    mimeType: string;
-    thumbnailUrl?: string;
-    durationSeconds?: number;
-  };
-  canPreview: boolean;
-  onPreview: () => void;
-}
+import type { AssetPreviewCardProps } from '../types';
 
 export function AssetPreviewCard({
   asset,

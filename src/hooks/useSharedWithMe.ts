@@ -1,32 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-import { fetchSharedWithMe, type SharedAsset } from '../lib/api';
+import { fetchSharedWithMe } from '../lib/api';
 import { buildAssetUrl } from '../lib/api';
-
-export interface SharedWithMeAsset {
-  id: string;
-  assetId: string;
-  name: string;
-  mimeType: string;
-  sizeBytes: number;
-  createdAt: string;
-  thumbnailUrl?: string;
-  durationSeconds?: number;
-  uploader: {
-    id: string;
-    fullName: string;
-    email: string;
-    role: string;
-  };
-  sharedBy: {
-    id: string;
-    fullName: string;
-    email: string;
-  };
-  shareType: 'PUBLIC' | 'RESTRICTED';
-  shareToken: string;
-  isActive: boolean;
-  sharedAt: string;
-}
+import type { SharedWithMeAsset, SharedAsset } from '../types';
 
 export function useSharedWithMe() {
   return useQuery({

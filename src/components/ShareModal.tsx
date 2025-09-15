@@ -6,13 +6,7 @@ import { Share2, Users, Globe, Check } from 'lucide-react';
 import { fetchUsers } from '../lib/api';
 import { useShareAsset } from '../hooks/useShareAsset';
 import { useToast } from '../hooks/useToast';
-
-interface ShareModalProps {
-  open: boolean;
-  onClose: () => void;
-  assetId: string;
-  assetName: string;
-}
+import type { ShareModalProps } from '../types';
 
 export function ShareModal({
   open,
